@@ -4,8 +4,6 @@ This Scrapy project is designed to scrape data from a specific RSS feed using Sc
 
 ## Installation
 
-### 1. Create a Virtual Environment
-
 ```bash
 # Create a virtual environment (replace 'venv' with your preferred name)
 python -m venv venv
