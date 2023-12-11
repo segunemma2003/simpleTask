@@ -1,5 +1,5 @@
 import scrapy
-
+import re
 from rssfeed.items import RssfeedItem
 
 
@@ -54,9 +54,13 @@ class RssfeedSpiderSpider(scrapy.Spider):
                 image_element = await data_element_3.query_selector('img')
                 image_src = await image_element.get_attribute('src')
                 # data_text = await data_element.inner_text()
+                links = self.extract_links_from_text(data_text_1)
+                # Remove links from data_text_1
+                cleaned_text_1 = self.remove_links_from_text(data_text_1)
                 book_data = RssfeedItem(
+                    links=links,
                     title=data_text_2,
-                    text=data_text_1,
+                    text=cleaned_text_1,
                     image_url=image_src,
                 )
 
@@ -68,3 +72,21 @@ class RssfeedSpiderSpider(scrapy.Spider):
     async def errback(self, failure):
         page = failure.request.meta["playwright_page"]
         await page.close()
+
+    def extract_links_from_text(self, text):
+        pattern = (
+            r'http[s]?://'
+            r'(?:[a-zA-Z]|[0-9]|[$-_@.&+]'
+            r'|[!*\\(\\),]'
+            r'|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+            )
+        return re.findall(pattern, text)
+
+    def remove_links_from_text(self, text):
+        pattern = (
+            r'http[s]?://'
+            r'(?:[a-zA-Z]|[0-9]|[$-_@.&+]'
+            r'|[!*\\(\\),]'
+            r'|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+            )
+        return re.sub(pattern, '', text)

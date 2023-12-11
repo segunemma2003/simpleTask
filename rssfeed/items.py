@@ -7,6 +7,7 @@ import scrapy
 
 
 class RssfeedItem(scrapy.Item):
+    links = scrapy.Field()
     title = scrapy.Field()
     image_url = scrapy.Field()
     text = scrapy.Field()
